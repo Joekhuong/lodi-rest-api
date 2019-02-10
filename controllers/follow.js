@@ -1,7 +1,7 @@
 "use strict";
 
 function model(req) {
-  return req.app.locals.models.idol;
+  return req.app.locals.models.user;
 }
 
 module.exports = {
@@ -13,10 +13,6 @@ module.exports = {
       {
         action: "view",
         path: ":id"
-      },
-      {
-        action: "search",
-        path: "search/:term"
       },
       {
         action: "create",
@@ -44,26 +40,6 @@ module.exports = {
       });
   },
 
-  search: (req, res, next) => {
-
-    if(req.params.term == undefined)
-    {
-      res.json([]);
-    }
-
-    const Op = req.app.locals.sequelize.Op;
-    model(req)
-      .findAll({
-        where: {
-          [Op.or]: [{firstname: {[Op.like]: req.params.term}}, {lastname: {[Op.like]: req.params.term}}]
-        }
-      })
-      .then(rows => {
-        console.log(rows);
-        res.json(rows);
-      });
-  },
-
   view: (req, res, next) => {
     model(req)
       .findById(req.params.id)
@@ -73,14 +49,11 @@ module.exports = {
       .catch(next);
   },
 
+
   create: (req, res, next) => {
+    console.log(req.body);
     model(req)
-      .create({
-        firstname: req.body.firstname,
-        lastname: req.body.lastname,
-        page_id: req.body.page_id,
-        img_url: req.body.img_url
-      })
+      .create(req.body)
       .then(row => {
         res.json(row);
       });
@@ -95,10 +68,8 @@ module.exports = {
           return Promise.resolve();
         }
         return row.update({
-          firstname: req.body.firstname,
-          lastname: req.body.lastname,
-          page_id: req.body.page_id,
-          img_url: req.body.img_url
+          title: req.body.title,
+          description: req.body.description
         });
       })
       .then(() => {

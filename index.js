@@ -16,6 +16,7 @@ exprest.route(app, { url: '/api' })
 .then(() => exprest.model({ dialect: 'sqlite', storage: './lodi.sqlite', })) // Use SQLite with memory storage
 .then((sequelize) => {
   app.locals.models = sequelize.models; // Save the models for controllers
+  app.locals.sequelize = sequelize;
   return sequelize.sync();
 })
 .then(() => {
