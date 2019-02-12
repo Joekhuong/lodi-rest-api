@@ -31,6 +31,10 @@ module.exports = {
         action: "remove",
         path: ":id",
         method: "delete"
+      },
+      {
+        action: "viewByPageId",
+        path: "page_id/:pageid"
       }
     ]
   },
@@ -45,9 +49,7 @@ module.exports = {
   },
 
   search: (req, res, next) => {
-
-    if(req.params.term == undefined)
-    {
+    if (req.params.term == undefined) {
       res.json([]);
     }
 
@@ -55,7 +57,10 @@ module.exports = {
     model(req)
       .findAll({
         where: {
-          [Op.or]: [{firstname: {[Op.like]: req.params.term}}, {lastname: {[Op.like]: req.params.term}}]
+          [Op.or]: [
+            { firstname: { [Op.like]: "%"+req.params.term+"%" } },
+            { lastname: { [Op.like]: "%"+req.params.term+"%" } }
+          ]
         }
       })
       .then(rows => {
@@ -72,7 +77,18 @@ module.exports = {
       })
       .catch(next);
   },
-
+  viewByPageId: (req, res, next) => {
+    model(req)
+      .find({
+        where: {
+          page_id: req.params.pageid
+        }
+      })
+      .then(row => {
+        row ? res.json(row) : res.status(404);
+      })
+      .catch(next);
+  },
   create: (req, res, next) => {
     model(req)
       .create({
