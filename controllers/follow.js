@@ -1,90 +1,59 @@
 "use strict";
 
 function model(req) {
-  return req.app.locals.models.user;
+  return req.app.locals.models.follow;
 }
 
 module.exports = {
   __exprest: {
     routes: [
       {
-        action: "list"
-      },
-      {
-        action: "view",
-        path: ":id"
-      },
-      {
-        action: "create",
+        action: "follow",
         method: "post"
       },
       {
-        action: "update",
-        path: ":id",
-        method: "put"
-      },
-      {
-        action: "remove",
-        path: ":id",
-        method: "delete"
+        action: "unfollow",
+        method: "post"
       }
     ]
   },
 
-  list: (req, res, next) => {
-    model(req)
-      .findAll()
-      .then(rows => {
-        console.log(rows);
-        res.json(rows);
-      });
+  unfollow: (req, res, next) => {
+
+    model(req).destroy({
+       where: {
+          user_id: req.body.user_id,
+          idol_id: req.body.idol_id
+       }
+    }).then(rowDeleted => {
+      res.json({status:true});
+    })
+    .catch(() => res.status(404));
   },
 
-  view: (req, res, next) => {
+  follow: (req, res, next) => {
     model(req)
-      .findById(req.params.id)
-      .then(row => {
-        row ? res.json(row) : res.status(404);
+      .create({
+        user_id: req.body.user_id,
+        idol_id: req.body.idol_id
       })
-      .catch(next);
-  },
-
-
-  create: (req, res, next) => {
-    console.log(req.body);
-    model(req)
-      .create(req.body)
       .then(row => {
         res.json(row);
-      });
+      })
+      .catch(() => res.status(404));;
   },
 
-  update: (req, res, next) => {
-    model(req)
-      .findById(req.params.id)
-      .then(row => {
-        if (!row) {
-          res.status(404);
-          return Promise.resolve();
-        }
-        return row.update({
-          title: req.body.title,
-          description: req.body.description
-        });
-      })
-      .then(() => {
-        res.end();
-      })
-      .catch(next);
-  },
+  hasFollowed: (req, res, next) => {
 
-  remove: (req, res, next) => {
-    model(req)
-      .findById(req.params.id)
-      .then(row => (row ? row.destroy() : Promise.resolve()))
-      .then(() => {
-        res.end();
-      })
-      .catch(next);
-  }
+    model(req).find({
+       where: {
+          user_id: req.body.user_id,
+          idol_id: req.body.idol_id
+       }
+    })
+    .then(row => {
+      row.length > 0 ? res.json({status:true}) : res.status(404);
+    })
+    .catch(next);
+  },
 };
