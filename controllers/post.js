@@ -62,7 +62,7 @@ module.exports = {
       .catch(next);
   },
 
-  viewByPageId: (req, res, next) => {
+  viewByUserId: (req, res, next) => {
     model(req)
       .find({
         where: {

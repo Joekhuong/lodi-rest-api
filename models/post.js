@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
     content: {
       type: DataTypes.TEXT,
       allowNull: false
-    }
+    },
     page_id: {
       type: DataTypes.INTEGER,
       allowNull: true

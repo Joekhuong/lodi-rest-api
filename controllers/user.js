@@ -40,6 +40,7 @@ module.exports = {
   },
 
   list: (req, res, next) => {
+    console.log(req.app.locals.sequelize);
     model(req)
       .findAll()
       .then(rows => {
