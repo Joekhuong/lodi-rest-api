@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     page_id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.TEXT,
       allowNull: true
     },
     created_by: {

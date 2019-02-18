@@ -52,29 +52,61 @@ module.exports = {
   },
 
   viewByPageId: (req, res, next) => {
-    model(req)
-      .findAll({
-        where: {
-          page_id: req.params.pageid
-        }
-      })
-      .then(row => {
-        row ? res.json(row) : res.status(404);
-      })
-      .catch(next);
+
+    let sql = `SELECT p.*, i.firstname||i.lastname AS idol_name , u.firstname||u.lastname AS user_name FROM posts AS p
+    LEFT JOIN users AS u ON p.created_by = u.id
+    LEFT JOIN idols AS i ON p.page_id = i.page_id
+    WHERE page_id='${req.params.pageid}'`;
+
+    req.app.locals.sequelize
+    .query(sql, { type: req.app.locals.sequelize.QueryTypes.SELECT})
+    .then(row => {
+      res.json(row);
+    }).catch(next);
+
+    // model(req)
+    //   .findAll({
+    //     where: {
+    //       page_id: req.params.pageid
+    //     }
+    //   })
+    //   .then(row => {
+    //     if(row.length == 0)
+    //     {
+    //       res.json([]);
+    //       return;
+    //     }
+    //
+    //
+    //
+    //     row ? res.json(row) : res.status(404);
+    //   })
+    //   .catch(next);
   },
 
   viewByUserId: (req, res, next) => {
-    model(req)
-      .find({
-        where: {
-          user_id: req.params.userid
-        }
-      })
-      .then(row => {
-        row ? res.json(row) : res.status(404);
-      })
-      .catch(next);
+
+    let sql = `SELECT p.*, i.firstname||i.lastname AS idol_name , u.firstname||u.lastname AS user_name FROM posts AS p
+    LEFT JOIN users AS u ON p.created_by = u.id
+    LEFT JOIN idols AS i ON p.page_id = i.page_id
+    WHERE created_by='${req.params.userid}'`;
+
+    req.app.locals.sequelize
+    .query(sql, { type: req.app.locals.sequelize.QueryTypes.SELECT})
+    .then(row => {
+      res.json(row);
+    }).catch(next);
+
+    // model(req)
+    //   .find({
+    //     where: {
+    //       user_id: req.params.userid
+    //     }
+    //   })
+    //   .then(row => {
+    //     row ? res.json(row) : res.status(404);
+    //   })
+    //   .catch(next);
   },
 
   viewByParentId: (req, res, next) => {
@@ -108,8 +140,8 @@ module.exports = {
       return;
     }
 
-    let page_id = req.params.pageid || null;
-    let parent_id = req.params.pageid || null;
+    let page_id = req.body.page_id || null;
+    let parent_id = req.body.parent_id || null;
 
     model(req)
       .create({
