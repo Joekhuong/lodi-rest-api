@@ -33,8 +33,8 @@ module.exports = {
 
     model(req).destroy({
        where: {
-          user_id: req.params.user_id,
-          idol_id: req.params.idol_id
+          user_id: req.body.user_id,
+          idol_id: req.body.idol_id
        }
     }).then(rowDeleted => {
       res.json({status:true});
@@ -46,8 +46,8 @@ module.exports = {
     console.log(req.params);
     model(req)
       .create({
-        user_id: req.params.user_id,
-        idol_id: req.params.idol_id
+        user_id: req.body.user_id,
+        idol_id: req.body.idol_id
       })
       .then(row => {
         console.log(row);
@@ -60,7 +60,7 @@ module.exports = {
 
     const Op = req.app.locals.sequelize.Op;
 
-    model(req).find({
+    model(req).findOne({
        where: {
           [Op.and]: [
             { user_id: req.params.userid },
@@ -69,10 +69,8 @@ module.exports = {
        }
     })
     .then(row => {
-
       if(row == null) res.json({status:false});
-      console.log(row);
-      row.length > 0 ? res.json({status:true}) : res.json({status:false});
+      row != undefined ? res.json({status:true}) : res.json({status:false});
     })
     .catch(() => (res.status(404)));
   },

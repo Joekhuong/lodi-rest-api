@@ -41,17 +41,19 @@ module.exports = {
   },
 
   view: (req, res, next) => {
+
     model(req)
-      .findById(req.params.id)
+      .findByPk(req.params.id)
       .then(row => {
-        row ? res.json(row) : res.status(404);
+        console.log(row);
+        row ? res.json(row) : res.json(null);
       })
       .catch(next);
   },
 
   viewByPageId: (req, res, next) => {
     model(req)
-      .find({
+      .findAll({
         where: {
           page_id: req.params.pageid
         }
@@ -90,19 +92,19 @@ module.exports = {
 
   create: (req, res, next) => {
 
-    let user_id = req.params.user_id || null;
+    let user_id = req.body.user_id || null;
 
     if(user_id == null)
     {
-      res.status(404);
+      res.json({status:false});
       return;
     }
 
-    let content = req.params.content || null;
+    let content = req.body.content || null;
 
     if(content == null)
     {
-      res.status(404);
+      res.json({status:false});
       return;
     }
 
@@ -111,14 +113,15 @@ module.exports = {
 
     model(req)
       .create({
-        user_id: user_id,
+        created_by: user_id,
         content: content,
         page_id: page_id,
         parent_id: parent_id
       })
       .then(row => {
         res.json(row);
-      });
+      })
+      .catch(() => res.json({status:false}));
   },
 
   update: (req, res, next) => {
