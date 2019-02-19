@@ -56,7 +56,7 @@ module.exports = {
     let sql = `SELECT p.*, i.firstname||i.lastname AS idol_name , u.firstname||u.lastname AS user_name FROM posts AS p
     LEFT JOIN users AS u ON p.created_by = u.id
     LEFT JOIN idols AS i ON p.page_id = i.page_id
-    WHERE page_id='${req.params.pageid}'`;
+    WHERE p.page_id='${req.params.pageid}'`;
 
     req.app.locals.sequelize
     .query(sql, { type: req.app.locals.sequelize.QueryTypes.SELECT})
