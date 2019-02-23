@@ -85,7 +85,7 @@ module.exports = {
   create: (req, res, next) => {
     console.log(req.body);
     model(req)
-      .create(req.body)
+      .create(req.body,{isNewRecord:true})
       .then(row => {
         res.json(row);
       });
