@@ -8,6 +8,7 @@ const express = require('express')
 ;
 
 app.use(cors());
+app.use(express.static(__dirname, { dotfiles: 'allow' } ));
 
 // support parsing of application/json type post data
 app.use(bodyParser.json());
