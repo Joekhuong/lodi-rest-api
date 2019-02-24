@@ -111,12 +111,13 @@ module.exports = {
 
   viewByParentId: (req, res, next) => {
     model(req)
-      .find({
+      .findAll({
         where: {
           parent_id: req.params.parentid
         }
       })
       .then(row => {
+        console.log(row);
         row ? res.json(row) : res.status(404);
       })
       .catch(next);
